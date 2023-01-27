@@ -11,16 +11,18 @@ class HttpServer: HttpServerLauncher() {
     private val contacts = arrayListOf<Contact>()
 
     @Provides
-    fun servlet(): AsyncServlet? {
+    fun servlet(): AsyncServlet {
         return RoutingServlet.create()
             .map(HttpMethod.GET, "/") {
                 HttpResponse.ok200()
                     .withJson(gson.toJson(Presentation()))
             }
+
             .map(HttpMethod.GET, "/getAllContacts") {
                 HttpResponse.ok200()
                     .withJson(gson.toJson(contacts))
             }
+
             .map(HttpMethod.POST, "/addContact") {
                 it.loadBody().map { _ ->
                     val body = it.body.asString(StandardCharsets.UTF_8)
